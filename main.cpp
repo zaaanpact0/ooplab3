@@ -1,55 +1,110 @@
 #include "array.h"
+#include <iostream>
+#include <string>
 
-int main() {
-    FigureArray array;
+using namespace std;
+
+int main() 
+{
+    FigureArray arr;
     
-    std::cout << "Figure input program\n";
-    std::cout << "Available figures: Triangle (3 vertices), Hexagon (6 vertices), Octagon (8 vertices)\n";
-    std::cout << "Enter 'q' to quit\n\n";
+    cout << "=== Figure Program ===" << endl;
+    cout << "Types: triangle (t), hexagon (h), octagon (o)" << endl;
+    cout << "Commands: quit (q), delete (d), print (p), area (a)" << endl;
+    cout << endl;
     
-    while (true) {
-        std::cout << "Choose figure type (t=triangle, h=hexagon, o=octagon, q=quit, d=delete, p=print, a=total area): ";
-        char choice;
-        std::cin >> choice;
+    char cmd;
+    bool running = true;
+    
+    while (running) 
+    {
+        cout << "Enter command: ";
+        cin >> cmd;
         
-        if (choice == 'q') {
-            break;
-        } else if (choice == 'p') {
-            array.printAllInfo();
-        } else if (choice == 'a') {
-            std::cout << "Total area: " << array.totalArea() << "\n\n";
-        } else if (choice == 'd') {
-            int index;
-            std::cout << "Enter index to delete: ";
-            std::cin >> index;
-            array.removeFigure(index);
-            std::cout << "Figure deleted\n\n";
-        } else if (choice == 't' || choice == 'h' || choice == 'o') {
-            std::unique_ptr<Figure> fig;
-            
-            if (choice == 't') {
-                fig = std::make_unique<Triangle>();
-                std::cout << "Enter 3 vertices (x y for each): ";
-            } else if (choice == 'h') {
-                fig = std::make_unique<Hexagon>();
-                std::cout << "Enter 6 vertices (x y for each): ";
-            } else if (choice == 'o') {
-                fig = std::make_unique<Octagon>();
-                std::cout << "Enter 8 vertices (x y for each): ";
-            }
-            
-            try {
-                std::cin >> *fig;
-                array.addFigure(std::move(fig));
-                std::cout << "Figure added successfully!\n\n";
-            } catch (const std::exception& e) {
-                std::cout << "Error: " << e.what() << "\n\n";
-                std::cin.clear();
-                std::cin.ignore(10000, '\n');
-            }
-        } else {
-            std::cout << "Invalid choice\n\n";
+        if (cmd == 'q') 
+        {
+            running = false;
+            cout << "Exiting..." << endl;
         }
+        else if (cmd == 'p') 
+        {
+            if (arr.size() == 0) 
+            {
+                cout << "No figures in array" << endl;
+            }
+            else 
+            {
+                arr.printAllInfo();
+            }
+        }
+        else if (cmd == 'a') 
+        {
+            double total = arr.totalArea();
+            cout << "Total area of all figures: " << total << endl;
+        }
+        else if (cmd == 'd') 
+        {
+            if (arr.size() == 0) 
+            {
+                cout << "Array is empty" << endl;
+                continue;
+            }
+            
+            int idx;
+            cout << "Enter index to delete (0-" << arr.size()-1 << "): ";
+            cin >> idx;
+            
+            if (idx >= 0 && static_cast<size_t>(idx) < arr.size()) 
+            {
+                arr.removeFigure(idx);
+                cout << "Figure " << idx << " deleted" << endl;
+            }
+            else 
+            {
+                cout << "Invalid index!" << endl;
+            }
+        }
+        else if (cmd == 't' || cmd == 'h' || cmd == 'o') 
+        {
+            std::unique_ptr<Figure> newFig;
+            
+            if (cmd == 't') 
+            {
+                newFig = std::make_unique<Triangle>();
+                cout << "Enter triangle vertices (3 points x y): ";
+            }
+            else if (cmd == 'h') 
+            {
+                newFig = std::make_unique<Hexagon>();
+                cout << "Enter hexagon vertices (6 points x y): ";
+            }
+            else if (cmd == 'o') 
+            {
+                newFig = std::make_unique<Octagon>();
+                cout << "Enter octagon vertices (8 points x y): ";
+            }
+            
+            try 
+            {
+                cin >> *newFig;
+                arr.addFigure(std::move(newFig));
+                cout << "Figure added! Total figures: " << arr.size() << endl;
+            }
+            catch (const exception& e) 
+            {
+                cout << "Error reading figure: " << e.what() << endl;
+                cin.clear();
+                string temp;
+                getline(cin, temp);
+            }
+        }
+        else 
+        {
+            cout << "Unknown command: " << cmd << endl;
+            cout << "Available: t,h,o,p,a,d,q" << endl;
+        }
+        
+        cout << endl;
     }
     
     return 0;

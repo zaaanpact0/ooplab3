@@ -35,10 +35,11 @@ Point Triangle::geometricCenter() const {
 
 double Triangle::area() const {
     const Point& a = vertices[0];
-    const Point& b = vertices[1];
+    const Point& b = vertices[1]; 
     const Point& c = vertices[2];
     
-    return std::abs((a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y)) / 2.0);
+    double result = (a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y));
+    return std::abs(result) / 2.0;
 }
 
 void Triangle::printVertices(std::ostream& os) const {
